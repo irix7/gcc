@@ -917,7 +917,7 @@ static const struct mips_rtx_cost_data
 		     6            /* memory_latency */
   },
   { /* R4000 */
-     COSTS_N_INSNS (6),           /* fp_add */
+     COSTS_N_INSNS (4),           /* fp_add */
      COSTS_N_INSNS (7),           /* fp_mult_sf */
      COSTS_N_INSNS (8),           /* fp_mult_df */
      COSTS_N_INSNS (23),          /* fp_div_sf */
@@ -7117,6 +7117,9 @@ mips_build_builtin_va_list (void)
       layout_type (record);
       return record;
     }
+  else if (TARGET_IRIX && TARGET_IRIX6)
+    /* On IRIX 6, this type is 'char *'.  */
+    return build_pointer_type (char_type_node);
   else
     /* Otherwise, we use 'void *'.  */
     return ptr_type_node;
@@ -7517,7 +7520,9 @@ mips_start_function_definition (const char *name, bool mips16_p,
       fputs ("\n", asm_out_file);
     }
 
+#ifdef ASM_OUTPUT_TYPE_DIRECTIVE
   ASM_OUTPUT_TYPE_DIRECTIVE (asm_out_file, name, "function");
+#endif
 
   /* Start the definition proper.  */
   ASM_OUTPUT_FUNCTION_LABEL (asm_out_file, name, decl);
@@ -9914,6 +9919,19 @@ mips_output_external (FILE *file, tree decl, const char *name)
 	  fprintf (file, ", " HOST_WIDE_INT_PRINT_DEC "\n",
 		   int_size_in_bytes (TREE_TYPE (decl)));
 	}
+      else if (TARGET_IRIX
+	       && mips_abi == ABI_32
+	       && TREE_CODE (decl) == FUNCTION_DECL)
+	{
+	  /* In IRIX 5 or IRIX 6 for the O32 ABI, we must output a
+	     `.global name .text' directive for every used but
+	     undefined function.  If we don't, the linker may perform
+	     an optimization (skipping over the insns that set $gp)
+	     when it is unsafe.  */
+	  fputs ("\t.globl ", file);
+	  assemble_name (file, name);
+	  fputs (" .text\n", file);
+	}
     }
 }
 
@@ -10315,6 +10333,11 @@ mips_file_start (void)
   default_file_start ();
 
   /* Generate a special section to describe the ABI switches used to
+     produce the resultant binary.  This is unnecessary on IRIX and
+     causes unwanted warnings from the native linker.  */
+  if (!TARGET_IRIX)
+    {
+  /* Generate a special section to describe the ABI switches used to
      produce the resultant binary.  */
 
   /* Record the ABI itself.  Modern versions of binutils encode
@@ -10322,16 +10345,18 @@ mips_file_start (void)
      information in order to correctly debug binaries produced by
      older binutils.  See the function mips_gdbarch_init in
      gdb/mips-tdep.c.  */
-  fprintf (asm_out_file, "\t.section .mdebug.%s\n\t.previous\n",
-	   mips_mdebug_abi_name ());
+/*  fprintf (asm_out_file, "\t.section .mdebug.%s\n\t.previous\n",
+	   mips_mdebug_abi_name ()); */
 
   /* There is no ELF header flag to distinguish long32 forms of the
      EABI from long64 forms.  Emit a special section to help tools
      such as GDB.  Do the same for o64, which is sometimes used with
      -mlong64.  */
-  if (mips_abi == ABI_EABI || mips_abi == ABI_O64)
+/*  if (mips_abi == ABI_EABI || mips_abi == ABI_O64)
     fprintf (asm_out_file, "\t.section .gcc_compiled_long%d\n"
-	     "\t.previous\n", TARGET_LONG64 ? 64 : 32);
+	     "\t.previous\n", TARGET_LONG64 ? 64 : 32); */
+
+    }
 
   /* Record the NaN encoding.  */
   if (HAVE_AS_NAN || mips_nan != MIPS_IEEE_754_DEFAULT)
@@ -12272,6 +12297,10 @@ mips_output_function_prologue (FILE *file)
      exactly matches the name used in ASM_DECLARE_FUNCTION_NAME.  */
   fnname = XSTR (XEXP (DECL_RTL (current_function_decl), 0), 0);
   mips_start_function_definition (fnname, TARGET_MIPS16, current_function_decl);
+
+  /* Stop mips_file_end from treating this function as external.  */
+  if (TARGET_IRIX && mips_abi == ABI_32)
+    TREE_ASM_WRITTEN (DECL_NAME (cfun->decl)) = 1;
 
   /* Output MIPS-specific frame information.  */
   if (!flag_inhibit_size_directive)

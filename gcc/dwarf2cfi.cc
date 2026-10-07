@@ -1521,6 +1521,10 @@ dwarf2out_frame_debug_cfa_restore (rtx reg, bool emit_cfi)
       if (emit_cfi)
 	add_cfi_restore (regno);
       update_row_reg_save (cur_row, regno, NULL);
+      if (REG_P (INCOMING_RETURN_ADDR_RTX) // Bootstrap fix
+	  && regno == dwf_regno (INCOMING_RETURN_ADDR_RTX)
+	  && regno != DWARF_FRAME_RETURN_COLUMN)
+	 reg_save (DWARF_FRAME_RETURN_COLUMN, dwf_cfa_reg(reg), NULL);
     }
   else
     {
@@ -1537,6 +1541,10 @@ dwarf2out_frame_debug_cfa_restore (rtx reg, bool emit_cfi)
 	  if (emit_cfi)
 	    add_cfi_restore (regno);
 	  update_row_reg_save (cur_row, regno, NULL);
+	  if (REG_P (INCOMING_RETURN_ADDR_RTX) // Bootstrap fix
+	     && regno == dwf_regno (INCOMING_RETURN_ADDR_RTX)
+	     && regno != DWARF_FRAME_RETURN_COLUMN)
+	    reg_save (DWARF_FRAME_RETURN_COLUMN, dwf_cfa_reg(reg), NULL);
 	}
     }
 }

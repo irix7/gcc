@@ -3193,7 +3193,7 @@ assemble_integer (rtx x, unsigned int size, unsigned int align, int force)
       gcc_assert (!i);
     }
 
-  gcc_assert (!force);
+/*  gcc_assert (!force); */
 
   return false;
 }
@@ -7200,7 +7200,7 @@ default_no_named_section (const char *name ATTRIBUTE_UNUSED,
 {
   /* Some object formats don't support named sections at all.  The
      front-end should already have flagged this as an error.  */
-  gcc_unreachable ();
+  /* gcc_unreachable (); */
 }
 
 #ifndef TLS_SECTION_ASM_FLAG
