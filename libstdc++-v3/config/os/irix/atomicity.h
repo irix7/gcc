@@ -1,6 +1,6 @@
-// -*- C++ -*- compatibility header.
+// Low-level functions for atomic operations: IRIX version  -*- C++ -*-
 
-// Copyright (C) 2007-2026 Free Software Foundation, Inc.
+// Copyright (C) 2001, 2004, 2005, 2009 Free Software Foundation, Inc.
 //
 // This file is part of the GNU ISO C++ Library.  This library is free
 // software; you can redistribute it and/or modify it under the
@@ -22,31 +22,17 @@
 // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 // <http://www.gnu.org/licenses/>.
 
-/** @file complex.h
- *  This is a Standard C++ Library header.
- */
+#include <mutex.h>
+#include <ext/atomicity.h>
 
-#ifndef _GLIBCXX_COMPLEX_H
-#define _GLIBCXX_COMPLEX_H 1
+_GLIBCXX_BEGIN_NAMESPACE(__gnu_cxx)
 
-#include <bits/c++config.h>
+  _Atomic_word
+  __exchange_and_add(volatile _Atomic_word* __mem, int __val) throw ()
+  { return (_Atomic_word) test_then_add((unsigned long*) const_cast<_Atomic_word*>(__mem), __val); }
 
-#if __cplusplus >= 201103L
-extern "C++" {
-#include <complex>
-}
-#endif
+  void
+  __atomic_add(volatile _Atomic_word* __mem, int __val) throw ()
+  { __exchange_and_add(__mem, __val); }
 
-#if __cplusplus >= 201103L && defined(__STRICT_ANSI__)
-// For strict modes do not include the C library's <complex.h>, see PR 82417.
-#elif _GLIBCXX_HAVE_COMPLEX_H
-# ifndef sgi
-# include_next <complex.h>
-# ifdef _GLIBCXX_COMPLEX
-// See PR56111, keep the macro in C++03 if possible.
-#  undef complex
-# endif
-# endif
-#endif
-
-#endif
+_GLIBCXX_END_NAMESPACE

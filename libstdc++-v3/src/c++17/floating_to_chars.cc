@@ -712,6 +712,8 @@ template<typename T>
   {
     __glibcxx_assert(precision >= 0);
 
+    return nullopt;
+/*
     string_view str;
     switch (__builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL,
 				 FP_ZERO, value))
@@ -801,6 +803,7 @@ template<typename T>
       }
     __glibcxx_assert(first - orig_first == expected_output_length);
     return {{first, errc{}}};
+ */
   }
 
 template<>

@@ -133,7 +133,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       char* __sav = new char[__llen];
       memcpy(__sav, __old, __llen);
       setlocale(LC_ALL, _M_name_timepunct);
-      const size_t __len = wcsftime(__s, __maxlen, __format, __tm);
+      const size_t __len = wcsftime(__s, __maxlen, (const char *)__format, __tm);
       setlocale(LC_ALL, __sav);
       delete [] __sav;
       // Make sure __s is null terminated.

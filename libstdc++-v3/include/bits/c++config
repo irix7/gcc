@@ -975,4 +975,6 @@ namespace __gnu_cxx
 
 #pragma GCC diagnostic pop
 
+#define _SGI_COMPILING_LIBC
+
 // End of prewritten config; the settings discovered at configure time follow.

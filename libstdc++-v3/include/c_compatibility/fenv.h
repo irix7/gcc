@@ -38,7 +38,9 @@
 
 #include <bits/c++config.h>
 #if _GLIBCXX_HAVE_FENV_H
+#ifndef sgi
 # include_next <fenv.h>
+#endif
 #endif
 
 #pragma GCC diagnostic pop
