@@ -225,7 +225,9 @@ struct mips_cpu_info {
 
 /* True if .gpword or .gpdword should be used for switch tables.  */
 #define TARGET_GPWORD				\
-  (TARGET_ABICALLS && !TARGET_ABSOLUTE_ABICALLS)
+  (TARGET_ABICALLS				\
+   && !TARGET_ABSOLUTE_ABICALLS			\
+   && !(mips_abi == ABI_64 && TARGET_IRIX))
 
 /* True if the output must have a writable .eh_frame.
    See ASM_PREFERRED_EH_DATA_FORMAT for details.  */
@@ -417,6 +419,9 @@ struct mips_cpu_info {
    those loads and stores follow it.  */
 #define TARGET_SYNC_AFTER_SC (!TARGET_OCTEON && !TARGET_XLP)
 
+#define TARGET_IRIX	   0
+#define TARGET_IRIX6	   0
+
 /* Define preprocessor macros for the -march and -mtune options.
    PREFIX is either _MIPS_ARCH or _MIPS_TUNE, INFO is the selected
    processor.  If INFO's canonical name is "foo", define PREFIX to
@@ -443,7 +448,8 @@ struct mips_cpu_info {
 #define TARGET_CPU_CPP_BUILTINS()					\
   do									\
     {									\
-      builtin_assert ("machine=mips");                        		\
+      if (!TARGET_IRIX)                                         	\
+	builtin_assert ("machine=mips");                        	\
       builtin_assert ("cpu=mips");					\
       builtin_define ("__mips__");     					\
       builtin_define ("_mips");						\
@@ -461,6 +467,8 @@ struct mips_cpu_info {
       if (TARGET_64BIT)							\
 	builtin_define ("__mips64");					\
 									\
+      if (!TARGET_IRIX)							\
+	{								\
       /* Treat _R3000 and _R4000 like register-size			\
 	 defines, which is how they've historically			\
 	 been used.  */							\
@@ -473,6 +481,7 @@ struct mips_cpu_info {
 	{								\
 	  builtin_define_std ("R3000");					\
 	  builtin_define ("_R3000");					\
+	}								\
 	}								\
 									\
       if (TARGET_FLOAT64)						\
