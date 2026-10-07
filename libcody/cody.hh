@@ -5,6 +5,10 @@
 #ifndef CODY_HH
 #define CODY_HH 1
 
+#ifdef sgi
+#define CODY_NETWORKING 0
+#endif
+
 // If the user specifies this as non-zero, it must be what we expect,
 // generally only good for requesting no networking
 #if !defined (CODY_NETWORKING)
@@ -18,6 +22,10 @@
 #undef CODY_NETWORKING
 #define CODY_NETWORKING 0
 #endif
+#endif
+
+#ifdef sgi
+#define socklen_t uint32_t
 #endif
 
 // C++

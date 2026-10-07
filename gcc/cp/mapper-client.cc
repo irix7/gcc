@@ -22,6 +22,7 @@ along with GCC; see the file COPYING3.  If not see
 #if defined (__unix__)
 // Solaris11's socket header used bcopy, which we poison.  cody.hh
 // will include it later under the above check
+#include <sys/types.h>
 #include <sys/socket.h>
 #endif
 #define INCLUDE_STRING

@@ -155,6 +155,18 @@ typedef HOST_WIDE_INT __gcc_host_wide_int__;
 #  define HOST_BITS_PER_WIDEST_FAST_INT HOST_BITS_PER_LONG
 #endif
 
+#ifndef PRId64
+#define PRId64 "lld"
+#endif
+
+#ifndef PRIu64
+#define PRIu64 "llu"
+#endif
+
+#ifndef PRIx64
+#define PRIx64 "llx"
+#endif
+
 /* Inline functions operating on HOST_WIDE_INT.  */
 
 /* Return X with all but the lowest bit masked off.  */

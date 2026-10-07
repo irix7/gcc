@@ -59,6 +59,10 @@ along with GCC; see the file COPYING3.  If not see
 #include "cgraph.h"
 #include "data-streamer.h"
 
+#ifndef PRIi64
+#define PRIi64 "lli"
+#endif
+
 /* Print the content of struct sreal.  */
 
 void

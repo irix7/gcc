@@ -540,4 +540,8 @@ typedef uLong FAR uLongf;
   #pragma map(inflate_copyright,"INCOPY")
 #endif
 
+#if defined(sgi)
+#define NO_vsnprintf
+#endif
+
 #endif /* ZCONF_H */

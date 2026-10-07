@@ -421,7 +421,7 @@ dwarf_buf_error (struct dwarf_buf *buf, const char *msg, int errnum)
 {
   char b[200];
 
-  snprintf (b, sizeof b, "%s in %s at %d",
+  sprintf (b, "%s in %s at %d",
 	    msg, buf->name, (int) (buf->buf - buf->start));
   buf->error_callback (buf->data, b, errnum);
 }

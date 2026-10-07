@@ -301,7 +301,7 @@ fileline_initialize (struct backtrace_state *state,
 	  filename = "/proc/curproc/file";
 	  break;
 	case 5:
-	  snprintf (buf, sizeof (buf), "/proc/%ld/object/a.out",
+	  sprintf (buf, "/proc/%ld/object/a.out",
 		    (long) getpid ());
 	  filename = buf;
 	  break;

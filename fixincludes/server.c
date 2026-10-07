@@ -155,8 +155,13 @@ close_server (void)
  *  to our server, and also that if the server dies, we do not
  *  die from a sigpipe problem.
  */
+#if sgi
+static void
+sig_handler (void)
+#else
 static void
 sig_handler (int signo ATTRIBUTE_UNUSED)
+#endif
 {
 #ifdef DEBUG
   /* FIXME: this is illegal to do in a signal handler.  */
