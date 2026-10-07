@@ -46,7 +46,10 @@
 #include "gcov.h"
 
 #if HAVE_SYS_MMAN_H
+#include <sys/types.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #endif
 
 #if __CHAR_BIT__ == 8
@@ -427,8 +430,14 @@ gcov_counter_add (gcov_type *counter, gcov_type value,
 static inline void *
 malloc_mmap (size_t length)
 {
-  return mmap (NULL, length, PROT_READ | PROT_WRITE,
-	       MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+  int fd = open("/dev/zero", O_RDWR);
+  if (fd < 0)
+    return MAP_FAILED;
+  void *ret = mmap (NULL, length, PROT_READ | PROT_WRITE,
+	       MAP_PRIVATE, fd, 0);
+
+  close(fd);
+  return ret;
 }
 
 #endif

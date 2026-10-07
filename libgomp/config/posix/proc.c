@@ -38,6 +38,9 @@
 # endif
 #endif
 
+#ifdef __sgi
+#define _SC_NPROCESSORS_ONLN _SC_NPROC_ONLN
+#endif
 
 /* At startup, determine the default number of threads.  It would seem
    this should be related to the number of cpus online.  */
