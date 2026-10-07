@@ -30,6 +30,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 
 /* 7.8.1.1 Exact-width integer types */
 
+#ifndef __inttypes_INCLUDED
 #ifdef __INT8_TYPE__
 typedef __INT8_TYPE__ int8_t;
 #endif
@@ -53,6 +54,7 @@ typedef __UINT32_TYPE__ uint32_t;
 #endif
 #ifdef __UINT64_TYPE__
 typedef __UINT64_TYPE__ uint64_t;
+#endif
 #endif
 
 /* 7.8.1.2 Minimum-width integer types */
@@ -88,8 +90,12 @@ typedef __UINTPTR_TYPE__ uintptr_t;
 
 /* 7.8.1.5 Greatest-width integer types */
 
+#ifndef __inttypes_INCLUDED
 typedef __INTMAX_TYPE__ intmax_t;
 typedef __UINTMAX_TYPE__ uintmax_t;
+#endif
+
+#define __inttypes_INCLUDED
 
 #if (!defined __cplusplus || __cplusplus >= 201103L \
      || defined __STDC_LIMIT_MACROS)
