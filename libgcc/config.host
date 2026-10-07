@@ -1060,6 +1060,9 @@ microblaze*-*-rtems*)
 	tmake_file="${tmake_file} microblaze/t-microblaze t-fdpbit"
 	extra_parts="$extra_parts crtbeginS.o crtendS.o crtbeginT.o crti.o crtn.o"
 	;;
+mips-sgi-irix[56]*)
+	extra_parts="irix-crti.o irix-crtn.o crtbegin.o crtend.o"
+	;;
 mips*-*-netbsd*)			# NetBSD/mips, either endian.
 	;;
 mips*-*-linux*)				# Linux MIPS, either endian.

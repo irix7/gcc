@@ -1098,6 +1098,12 @@ crti$(objext): $(srcdir)/config/$(cpu_type)/crti.S
 
 crtn$(objext): $(srcdir)/config/$(cpu_type)/crtn.S
 	$(crt_compile) -c -x assembler-with-cpp $<
+
+irix-crti$(objext): $(srcdir)/config/$(cpu_type)/irix-crti.asm
+	$(crt_compile) -c -x assembler-with-cpp $<
+
+irix-crtn$(objext): $(srcdir)/config/$(cpu_type)/irix-crtn.asm
+	$(crt_compile) -c -x assembler-with-cpp $<
 endif
 
 # Build extra startfiles in the libgcc directory.

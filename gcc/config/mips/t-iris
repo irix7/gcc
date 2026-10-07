@@ -1,0 +1,13 @@
+$(T)irix-crti.o: $(srcdir)/config/mips/irix-crti.asm $(GCC_PASSES)
+	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(MULTILIB_CFLAGS) $(INCLUDES) \
+	-c -o $@ -x assembler-with-cpp $<
+
+$(T)irix-crtn.o: $(srcdir)/config/mips/irix-crtn.asm $(GCC_PASSES)
+	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(MULTILIB_CFLAGS) $(INCLUDES) \
+	-c -o $@ -x assembler-with-cpp $<
+
+#undef  STARTFILE_SPEC
+#define STARTFILE_SPEC "irix-crti.asm crtbegin.s"
+
+#undef  ENDFILE_SPEC
+#define ENDFILE_SPEC "crtend.s irix-crtn.asm"

@@ -2643,6 +2643,58 @@ loongarch*-*-elf*)
 	gcc_cv_initfini_array=yes
 	;;
 
+mips-sgi-irix[56]*)
+	tm_file="elfos.h ${tm_file} mips/iris.h"
+	tmake_file="mips/t-iris mips/t-slibgcc-irix"
+	target_cpu_default="MASK_ABICALLS"
+	case ${target} in
+	*-*-irix5*)
+		tm_file="${tm_file} mips/iris5.h"
+		use_gcc_stdint=provide
+		;;
+
+	*-*-irix6*)
+		tm_file="${tm_file} mips/iris6.h"
+		tmake_file="${tmake_file} mips/t-iris6"
+		case ${target} in
+		*-*-irix6*o32 | *-*-irix6*n32)
+			tm_defines="${tm_defines} MIPS_ISA_DEFAULT=2 MIPS_ABI_DEFAULT=ABI_32"
+			use_gcc_stdint=provide
+			;;
+		*-*-irix6.[0-4]*)
+			tm_defines="${tm_defines} MIPS_ISA_DEFAULT=3 MIPS_ABI_DEFAULT=ABI_N32"
+			use_gcc_stdint=provide
+			;;
+		*-*-irix6.5*)
+			tm_defines="${tm_defines} MIPS_ISA_DEFAULT=3 MIPS_ABI_DEFAULT=ABI_N32"
+			# The captured 6.5.7m environment has no system
+			# stdint.h; only the optional IRIX Development
+			# Foundation 1.3 ships one. Provide GCC's
+			# stdint-gcc.h directly, as IRIX 5 and 6.0-6.4 do:
+			# wrap would include_next a header that is not there
+			# and break hosted inclusion. The trade-off is that
+			# GCC's header shadows a system one on IDF 1.3
+			# installations; stdint-gcc.h's __inttypes_INCLUDED
+			# guard (patch 0007) keeps mixed use with the native
+			# inttypes.h compatible.
+			use_gcc_stdint=provide
+			;;
+		esac
+		;;
+	esac
+	if test "x$stabs" = xyes
+	then
+		tm_file="${tm_file} dbx.h"
+	fi
+	if test "x$gnu_ld" = xyes
+	then
+		tm_defines="${tm_defines} IRIX_USING_GNU_LD"
+	fi
+	case ${enable_threads}:${have_pthread_h} in
+	  "":yes | yes:yes ) thread_file=posix ;;
+	esac
+	;;
+
 mips*-*-netbsd*)			# NetBSD/mips, either endian.
 	target_cpu_default="MASK_ABICALLS"
 	tm_file="elfos.h ${tm_file} mips/elf.h ${nbsd_tm_file} mips/netbsd.h"
