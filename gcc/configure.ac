@@ -961,7 +961,15 @@ AC_ARG_ENABLE(fixed-point,
       ;;
 
     mips*-*-*)
-      enable_fixed_point=yes
+      case $host in
+	mips*-sgi-irix*)
+	  AC_MSG_WARN(fixed-point is not supported on IRIX, ignored)
+	  enable_fixed_point=no
+	  ;;
+	*)
+	  enable_fixed_point=yes
+	  ;;
+      esac
       ;;
     loongarch*-*-*)
       enable_fixed_point=yes
@@ -2144,7 +2152,7 @@ case ${enable_threads} in
     # default
     target_thread_file='single'
     ;;
-  aix | dce | lynx | mipssde | posix | rtems | \
+  aix | dce | irix | lynx | mipssde | posix | rtems | \
   single | tpf | vxworks | win32 | mcf)
     target_thread_file=${enable_threads}
     ;;
@@ -4429,6 +4437,13 @@ case $target_os in
 	AC_MSG_ERROR([Cannot check for broken secrel32 relocations to determine --enable-tls support. See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80881 for more information.])
       fi
     fi
+    ;;
+esac
+case "$target" in
+  *-*-irix6*|*-*-irix5*)
+    # IRIX 6.5 rld and libc.so lack TLS support, so even if gas and gld
+    # with TLS support are in use, native TLS cannot work.
+    set_have_as_tls=no
     ;;
 esac
 if test $set_have_as_tls = yes ; then
