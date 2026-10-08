@@ -2686,10 +2686,12 @@ mips-sgi-irix[56]*)
 	then
 		tm_file="${tm_file} dbx.h"
 	fi
-	if test "x$ld_flavor" = xgnu
-	then
-		tm_defines="${tm_defines} IRIX_USING_GNU_LD"
-	fi
+	# GCC 17 computes ld_flavor only after config.gcc is sourced, so the
+	# old $gnu_ld test can never fire here. The IRIX target is always built
+	# against our own GNU binutils (ld_flavor=gnu), so define it directly;
+	# without it IRIX_NO_UNRESOLVED stays "-no_unresolved" and GNU ld
+	# rejects every non-shared target link.
+	tm_defines="${tm_defines} IRIX_USING_GNU_LD"
 	case ${enable_threads}:${have_pthread_h} in
 	  "":yes | yes:yes ) thread_file=posix ;;
 	esac
