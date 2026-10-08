@@ -8031,7 +8031,7 @@ else
       ;;
 
     mips*-*-*)
-      case $host in
+      case $target in
 	mips*-sgi-irix*)
 	  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: fixed-point is not supported on IRIX" >&5
 $as_echo "$as_me: WARNING: fixed-point is not supported on IRIX" >&2;}

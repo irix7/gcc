@@ -961,7 +961,7 @@ AC_ARG_ENABLE(fixed-point,
       ;;
 
     mips*-*-*)
-      case $host in
+      case $target in
 	mips*-sgi-irix*)
 	  AC_MSG_WARN(fixed-point is not supported on IRIX, ignored)
 	  enable_fixed_point=no
