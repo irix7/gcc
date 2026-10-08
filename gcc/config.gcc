@@ -2686,7 +2686,7 @@ mips-sgi-irix[56]*)
 	then
 		tm_file="${tm_file} dbx.h"
 	fi
-	if test "x$gnu_ld" = xyes
+	if test "x$ld_flavor" = xgnu
 	then
 		tm_defines="${tm_defines} IRIX_USING_GNU_LD"
 	fi
