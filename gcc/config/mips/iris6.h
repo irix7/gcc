@@ -35,6 +35,11 @@ along with GCC; see the file COPYING3.  If not see
   "%{mabi=32: %{!mips*: %{!march*: -mips2}}}", 	\
   "%{mabi=n32: %{!mips*: %{!march*: -mips3}}}",	\
   "%{mabi=64: %{!mips*: %{!march*: -mips4}}}",	\
+  /* The IRIX 6.5 n64 development libraries live in /usr/lib64/abi, not
+     the /usr/lib64/mips3 and /usr/lib64/mips4 ISA subsets the upstream
+     specs name.  Add it first so -lc resolves the n64 libc ahead of the
+     32-bit default library paths.  */				\
+  "%{mabi=64: -L%R/usr/lib64 -L%R/usr/lib64/abi}",		\
   "%{g*: %{!gdwarf*: -gdwarf-3}}", \
   /* Configuration-independent MIPS rules.  */	\
   BASE_DRIVER_SELF_SPECS
@@ -54,8 +59,13 @@ along with GCC; see the file COPYING3.  If not see
  */
 
 #ifdef IRIX_USING_GNU_LD
+/* IRIX ships the n64 development libraries as link-time stubs under
+   /usr/lib64/abi whose internal references are resolved at run time by the
+   base OS.  The native linker accepts those unresolved shared-object
+   references for a dynamic link; GNU ld reports them unless told to allow
+   them.  This applies to the n64 multilib only.  */
 #define IRIX_SUBTARGET_LINK_SPEC \
-  "%{mabi=32: -melf32bsmip}%{mabi=n32: -melf32bmipn32}%{mabi=64: -melf64bmip}"
+  "%{mabi=32: -melf32bsmip}%{mabi=n32: -melf32bmipn32}%{mabi=64: -melf64bmip --allow-shlib-undefined}"
 #else
   /* Explicitly hide crt symbols that would normally be marked with
      a "hidden" visibility attribute.
@@ -100,13 +110,10 @@ along with GCC; see the file COPYING3.  If not see
          %{!pg:%{p:%R/usr/lib32/mips3/mcrt1.o%s %R/usr/lib32/mips3/libprof1.a%s} \
            %{!p:%R/usr/lib32/mips3/crt1.o%s}}}} \
      %{mabi=64: \
-       %{mips4:%{pg:%R/usr/lib64/mips4/gcrt1.o} \
-         %{!pg:%{p:%R/usr/lib64/mips4/mcrt1.o %R/usr/lib64/mips4/libprof1.a} \
-           %{!p:%R/usr/lib64/mips4/crt1.o}}} \
-       %{!mips4:%{pg:%R/usr/lib64/mips3/gcrt1.o} \
-         %{!pg:%{p:%R/usr/lib64/mips3/mcrt1.o %R/usr/lib64/mips3/libprof1.a} \
-           %{!p:%R/usr/lib64/mips3/crt1.o}}}}} \
-  irix-crti.o%s crtbegin.o%s"
+       %{pg:%R/usr/lib64/abi/gcrt1.o} \
+       %{!pg:%{p:%R/usr/lib64/abi/mcrt1.o %R/usr/lib64/abi/libprof1.a} \
+         %{!p:%R/usr/lib64/abi/crt1.o}}}} \
+   irix-crti.o%s crtbegin.o%s"
 
 #undef LIB_SPEC
 #define LIB_SPEC \
@@ -132,8 +139,7 @@ along with GCC; see the file COPYING3.  If not see
      %{mabi=32:crtn.o%s}\
      %{mabi=n32:%{mips4:%R/usr/lib32/mips4/crtn.o%s}\
        %{!mips4:%R/usr/lib32/mips3/crtn.o%s}}\
-     %{mabi=64:%{mips4:%R/usr/lib64/mips4/crtn.o%s}\
-       %{!mips4:%R/usr/lib64/mips3/crtn.o%s}}}"
+     %{mabi=64:%R/usr/lib64/abi/crtn.o%s}}"
 
 #define MIPS_TFMODE_FORMAT mips_extended_format
 
