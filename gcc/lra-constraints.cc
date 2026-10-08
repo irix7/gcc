@@ -2593,6 +2593,12 @@ process_alt_operands (int only_alternative)
 	  machine_mode mode;
 	  enum constraint_num cn;
 	  bool class_change_p = false;
+	  /* True if this operand's constraint permits memory implicitly (the
+	     'g' constraint).  Only then is it worth re-running the alternative
+	     scan with a memory preference when no hard register can hold the
+	     operand mode; doing so otherwise poisons valid register
+	     alternatives (e.g. a later 'mflo' alternative on MIPS).  */
+	  bool implicit_memok_p = false;
 
 	  opalt_num = nalt * n_operands + nop;
 	  if (curr_static_id->operand_alternative[opalt_num].anything_ok)
@@ -2870,6 +2876,7 @@ process_alt_operands (int only_alternative)
 		  }
 
 		case 'g':
+		  implicit_memok_p = true;
 		  if (MEM_P (op)
 		      || general_constant_p (op)
 		      || spilled_pseudo_p (op))
@@ -3230,12 +3237,12 @@ process_alt_operands (int only_alternative)
 				     nop);
 			  reject += 2;
 			}
-		      else if (!prefer_memory_p)
+		      else if (!prefer_memory_p && implicit_memok_p)
 			{
 			  /* No hard reg of the operand class can hold the
-			     operand mode, but the constraint may still permit
-			     memory (e.g. 'g').  Prefer memory for the operands
-			     before refusing.  */
+			     operand mode, but the 'g' constraint still permits
+			     memory.  Prefer memory for the operands before
+			     refusing.  */
 			  prefer_memory_p = true;
 			  if (lra_dump_file != NULL)
 			    fprintf (lra_dump_file,
