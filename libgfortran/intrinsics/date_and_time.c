@@ -41,12 +41,17 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #undef gmtime_r
 #endif
 
+/* Give the fallback a distinct name and a macro wrapper: some systems
+   (e.g. IRIX) declare gmtime_r as a real function but fail the
+   configure link probe, and a same-named static definition would then
+   clash with the system declaration.  */
 static struct tm *
-gmtime_r (const time_t * timep, struct tm * result)
+gf_gmtime_r (const time_t * timep, struct tm * result)
 {
   *result = *gmtime (timep);
   return result;
 }
+#define gmtime_r(timep, result) gf_gmtime_r ((timep), (result))
 #endif
 
 

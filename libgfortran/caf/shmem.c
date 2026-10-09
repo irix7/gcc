@@ -1750,7 +1750,11 @@ _gfortran_caf_form_team (int team_no, caf_team_t *team, int *new_index,
   memid tmemid;
 
   if (image_size_shift < 0)
-    image_size_shift = (int) round (log2 (local->total_num_images));
+    /* IRIX 6.5's <math.h> predates C99 and has no log2; compute the
+       base-2 logarithm from the plain log so the shared-memory coarray
+       runtime builds there too.  */
+    image_size_shift = (int) round (log ((double) local->total_num_images)
+				    / log (2.0));
   if (stat)
     *stat = 0;
 

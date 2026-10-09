@@ -65,6 +65,9 @@ get_image_num_from_envvar (void)
   if (!num_images_char)
 #ifdef _SC_NPROCESSORS_ONLN
     return sysconf (_SC_NPROCESSORS_ONLN);
+#elif defined(_SC_NPROC_ONLN)
+    /* IRIX names the online-processor count _SC_NPROC_ONLN.  */
+    return sysconf (_SC_NPROC_ONLN);
 #elif defined(WIN32)
     num_images_char = getenv ("NUMBER_OF_PROCESSORS");
 #elif defined (__hpux__)

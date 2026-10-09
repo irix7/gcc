@@ -88,12 +88,17 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #undef localtime_r
 #endif
 
+/* Give the fallback a distinct name and a macro wrapper: some systems
+   (e.g. IRIX) declare localtime_r as a real function but fail the
+   configure link probe, and a same-named static definition would then
+   clash with the system declaration.  */
 static inline struct tm *
-localtime_r (const time_t * timep, struct tm * result)
+gf_localtime_r (const time_t * timep, struct tm * result)
 {
   *result = *localtime (timep);
   return result;
 }
+#define localtime_r(timep, result) gf_localtime_r ((timep), (result))
 #endif
 
 

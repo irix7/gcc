@@ -28,6 +28,8 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include "libgfortran.h"
 #include "math_imp.h"
 
+#include <errno.h>
+
 /* On a C99 system "I" (with I*I = -1) should be defined in complex.h;
    if not, we define a fallback version here.  */
 #ifndef I
@@ -551,7 +553,7 @@ long double floorl (long double);
 #include "floorl_16.c"
 #else
 long double
-floorl (long double x);
+floorl (long double x)
 {
   /* Zero, possibly signed.  */
   if (x == 0)

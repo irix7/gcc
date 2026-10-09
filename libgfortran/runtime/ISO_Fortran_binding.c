@@ -31,6 +31,18 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
 #include <string.h>
 #include <inttypes.h>   /* for PRIiPTR */
 
+/* Some targets ship an <inttypes.h> that predates C99 and so lacks the
+   PRI*PTR macros (IRIX 6.5 is one).  The values printed below are cast to
+   ptrdiff_t, so provide a matching length modifier when the system header
+   does not.  */
+#ifndef PRIiPTR
+# if defined(__SIZEOF_PTRDIFF_T__) && __SIZEOF_PTRDIFF_T__ > 4
+#  define PRIiPTR "li"
+# else
+#  define PRIiPTR "i"
+# endif
+#endif
+
 extern void cfi_desc_to_gfc_desc (gfc_array_void *, CFI_cdesc_t **);
 export_proto(cfi_desc_to_gfc_desc);
 
