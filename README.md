@@ -27,7 +27,7 @@ Target: **`mips-sgi-irix6.5`** — big-endian MIPS III/IV, ELF32, with the **o32
 | --- | --- | --- | --- |
 | C | `cc1` | `libgcc` | works (o32/n32/n64) |
 | C++ | `cc1plus` | `libstdc++` | works (IRIX OS layer ported) |
-| Fortran | `f951` | `libgfortran` | works |
+| Fortran | `f951` | `libgfortran` | frontend builds; runtime blocked — [issue #157](https://github.com/irix7/project/issues/157) |
 | JIT | `libgccjit` | n/a (host) | works — the Rust backend |
 | Go | `go1` | `libgo` | **in progress** — [issue #153](https://github.com/irix7/project/issues/153) |
 | Objective-C / Obj-C++ | `cc1obj`/`cc1objplus` | `libobjc` | not enabled — [issue #154](https://github.com/irix7/project/issues/154) |
@@ -67,6 +67,10 @@ passes.
 
 **Not yet:**
 
+- **Fortran runtime (`libgfortran`)** — the `f951` frontend builds, but libgfortran
+  and the libstdc++ C++23 `std` module hit IRIX C99 header gaps (`PRI*PTR`; C99
+  math/stdlib names not in `std`).
+  [issue #157](https://github.com/irix7/project/issues/157)
 - **Go / gccgo** — the frontend builds; the `libgo` IRIX runtime is being
   restored. [issue #153](https://github.com/irix7/project/issues/153)
 - **Objective-C, Modula-2, D, Ada, COBOL** — not enabled for IRIX.
