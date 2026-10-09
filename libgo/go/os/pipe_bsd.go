@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build aix || darwin || (js && wasm) || (solaris && !illumos)
+//go:build aix || darwin || irix || (js && wasm) || (solaris && !illumos)
 
 package os
 
