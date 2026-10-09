@@ -27,6 +27,12 @@
 #include <time.h>
 #include <unistd.h>
 
+/* IRIX 6.5 <sys/socket.h> does not define socklen_t.  */
+#if defined(__sgi__) && !defined(_SOCKLEN_T)
+typedef int socklen_t;
+#define _SOCKLEN_T
+#endif
+
 #ifndef HAVE_OFF64_T
 typedef signed int off64_t __attribute__ ((mode (DI)));
 #endif

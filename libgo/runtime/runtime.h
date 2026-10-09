@@ -5,7 +5,12 @@
 #include "config.h"
 
 #include "go-assert.h"
-#include <complex.h>
+/* IRIX 6.5 has no C99 <complex.h>; the _Complex builtin is used directly.  */
+#if defined(__has_include)
+# if __has_include(<complex.h>)
+#  include <complex.h>
+# endif
+#endif
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>

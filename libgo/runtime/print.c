@@ -22,7 +22,7 @@ extern void runtime_printhex(uint64)
   __asm__(GOSYM_PREFIX "runtime.printhex");
 extern void runtime_printfloat(float64)
   __asm__(GOSYM_PREFIX "runtime.printfloat");
-extern void runtime_printcomplex(complex double)
+extern void runtime_printcomplex(_Complex double)
   __asm__(GOSYM_PREFIX "runtime.printcomplex");
 extern void runtime_printbool(_Bool)
   __asm__(GOSYM_PREFIX "runtime.printbool");
@@ -161,7 +161,7 @@ go_vprintf(const char *s, va_list va)
 			runtime_printfloat(va_arg(va, float64));
 			break;
 		case 'C':
-			runtime_printcomplex(va_arg(va, complex double));
+			runtime_printcomplex(va_arg(va, _Complex double));
 			break;
 		case 'i':
 			runtime_printiface(va_arg(va, Iface));
