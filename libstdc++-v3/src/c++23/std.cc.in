@@ -3198,10 +3198,17 @@ export namespace std
   using std::stof;
   using std::stoi;
   using std::stol;
+#if (_GLIBCXX_HAVE_STRTOLD && !_GLIBCXX_HAVE_BROKEN_STRTOLD) \
+    || (__DBL_MANT_DIG__ == __LDBL_MANT_DIG__)
   using std::stold;
+#endif
+#if _GLIBCXX_USE_C99_STDLIB || (__LONG_WIDTH__ == __LONG_LONG_WIDTH__)
   using std::stoll;
+#endif
   using std::stoul;
+#if _GLIBCXX_USE_C99_STDLIB || (__LONG_WIDTH__ == __LONG_LONG_WIDTH__)
   using std::stoull;
+#endif
   using std::string;
   using std::to_string;
 #ifdef _GLIBCXX_USE_WCHAR_T

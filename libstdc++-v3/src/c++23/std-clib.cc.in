@@ -88,6 +88,10 @@ export C_LIB_NAMESPACE
 }
 
 // 28.7.1 <cmath>
+// <cmath> only declares the C99 additions (both the C99 functions and the
+// C99 classification macros) when the target's <math.h> provides them, so
+// the module can only re-export them under the same condition.
+#if _GLIBCXX_USE_C99
 export C_LIB_NAMESPACE
 {
   using std::abs;
@@ -346,6 +350,7 @@ export C_LIB_NAMESPACE
   using std::sph_neumannl;
 #endif
 }
+#endif // _GLIBCXX_USE_C99
 
 // 17.13.3 <csetjmp>
 export C_LIB_NAMESPACE
@@ -467,7 +472,9 @@ export C_LIB_NAMESPACE
   using std::setbuf;
   using std::setvbuf;
   using std::size_t;
+#if _GLIBCXX_USE_C99_STDIO
   using std::snprintf;
+#endif
   using std::sprintf;
   using std::sscanf;
   using std::tmpfile;
@@ -476,18 +483,26 @@ export C_LIB_NAMESPACE
 #endif
   using std::ungetc;
   using std::vfprintf;
+#if _GLIBCXX_USE_C99_STDIO
   using std::vfscanf;
+#endif
   using std::vprintf;
+#if _GLIBCXX_USE_C99_STDIO
   using std::vscanf;
   using std::vsnprintf;
+#endif
   using std::vsprintf;
+#if _GLIBCXX_USE_C99_STDIO
   using std::vsscanf;
+#endif
 }
 
 // 17.2.2 <cstdlib> [cstdlib.syn]
 export C_LIB_NAMESPACE
 {
+#if _GLIBCXX_USE_C99_STDLIB
   using std::_Exit;
+#endif
   using std::abort;
   using std::abs;
 #ifdef _GLIBCXX_HAVE_ALIGNED_ALLOC
@@ -500,7 +515,9 @@ export C_LIB_NAMESPACE
   using std::atof;
   using std::atoi;
   using std::atol;
+#if _GLIBCXX_USE_C99_STDLIB
   using std::atoll;
+#endif
   using std::bsearch;
   using std::calloc;
   using std::div;
@@ -511,9 +528,11 @@ export C_LIB_NAMESPACE
   using std::labs;
   using std::ldiv;
   using std::ldiv_t;
+#if _GLIBCXX_USE_C99_STDLIB
   using std::llabs;
   using std::lldiv;
   using std::lldiv_t;
+#endif
   using std::malloc;
 #ifdef _GLIBCXX_HAVE_MBSTATE_T
   using std::mblen;
@@ -529,12 +548,18 @@ export C_LIB_NAMESPACE
   using std::size_t;
   using std::srand;
   using std::strtod;
+#if _GLIBCXX_USE_C99_STDLIB
   using std::strtof;
+#endif
   using std::strtol;
+#if _GLIBCXX_USE_C99_STDLIB
   using std::strtold;
   using std::strtoll;
+#endif
   using std::strtoul;
+#if _GLIBCXX_USE_C99_STDLIB
   using std::strtoull;
+#endif
   using std::system;
 #ifdef _GLIBCXX_USE_WCHAR_T
   using std::wcstombs;
