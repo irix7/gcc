@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build cgo && !netgo && (aix || darwin || hurd || (linux && !android) || netbsd || solaris)
+//go:build cgo && !netgo && (aix || darwin || irix || hurd || (linux && !android) || netbsd || solaris)
 
 package net
 

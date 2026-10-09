@@ -129,7 +129,7 @@ for f in $gofiles; do
 	"") ;;
 	$goarch) ;;
 	$goos) ;;
-	aix | android | darwin | dragonfly | freebsd | illumos | hurd | ios | js | linux | nacl | netbsd | openbsd | plan9 | solaris | windows | zos)
+	aix | android | darwin | dragonfly | freebsd | illumos | hurd | ios | irix | js | linux | nacl | netbsd | openbsd | plan9 | solaris | windows | zos)
 	    tag1=nonmatchingtag
 	    ;;
 	386 | amd64 | amd64p32 | arm | armbe | arm64 | arm64be | alpha | ia64 | m68k | mips | mipsle | mips64 | mips64le | mips64p32 | mips64p32le | nios2 | ppc | ppc64 | ppc64le | riscv | riscv64 | s390 | s390x | sh | shbe | sparc | sparc64 | wasm)
@@ -146,7 +146,7 @@ for f in $gofiles; do
 	"") ;;
 	$goarch) ;;
 	$goos) ;;
-	aix | android | darwin | dragonfly | freebsd | hurd | ios | illumos | js | linux | nacl | netbsd | openbsd | plan9 | solaris | windows | zos)
+	aix | android | darwin | dragonfly | freebsd | hurd | ios | illumos | irix | js | linux | nacl | netbsd | openbsd | plan9 | solaris | windows | zos)
 	    tag2=nonmatchingtag
 	    ;;
 	386 | amd64 | amd64p32 | arm | armbe | arm64 | arm64be | alpha | ia64 | m68k | mips | mipsle | mips64 | mips64le | mips64p32 | mips64p32le | nios2 | ppc | ppc64 | ppc64le | riscv | riscv64 | s390 | s390x | sh | shbe | sparc | sparc64 | wasm)

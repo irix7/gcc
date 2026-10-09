@@ -112,6 +112,13 @@ if test "${GOOS}" = "aix"; then
     bits=`grep 'const _NSIG = _NSIG[0-9]*$' gen-sysinfo.go | sed -e 's/.* = _NSIG\([0-9]*\)/\1/'`
     nsig=`grep "const _SIGMAX$bits = [0-9]*$" gen-sysinfo.go | sed -e 's/.* = \([0-9]*\)/\1/'`
     nsig=`expr $nsig + 1`
+elif test "${GOOS}" = "irix"; then
+    # IRIX <sys/signal.h> defines NSIG (65) but -fdump-go-spec does not
+    # emit it.  SIGRTMAX is the highest valid signal number (NSIG - 1).
+    rtmax=`grep 'const _SIGRTMAX = [0-9]*$' gen-sysinfo.go | sed -e 's/.* = \([0-9]*\)/\1/'`
+    if test -n "$rtmax"; then
+	nsig=`expr $rtmax + 1`
+    fi
 else
     nsig=`grep 'const _*NSIG = [0-9]*$' gen-sysinfo.go | sed -e 's/.* = \([0-9]*\)/\1/'`
     if test -z "$nsig"; then

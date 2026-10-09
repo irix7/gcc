@@ -409,7 +409,12 @@ echo "type Mode_t _mode_t" >> ${OUT}
 echo "type Pid_t _pid_t" >> ${OUT}
 echo "type Uid_t _uid_t" >> ${OUT}
 echo "type Gid_t _gid_t" >> ${OUT}
-echo "type Socklen_t _socklen_t" >> ${OUT}
+if grep '^type _socklen_t ' gen-sysinfo.go >/dev/null 2>&1; then
+  echo "type Socklen_t _socklen_t" >> ${OUT}
+elif test "${GOOS}" = "irix"; then
+  # IRIX 6.5 does not define socklen_t; socket lengths are int.
+  echo "type Socklen_t int32" >> ${OUT}
+fi
 
 # The C int type.
 sizeof_int=`grep '^const ___SIZEOF_INT__ = ' gen-sysinfo.go | sed -e 's/.*= //'`
@@ -750,7 +755,9 @@ grep '^const _NI_' gen-sysinfo.go | \
   sed -e 's/^\(const \)_\(NI_[^= ]*\)\(.*\)$/\1\2 = _\2/' >> ${OUT}
 
 # If nothing else defined EAI_OVERFLOW, make sure it has a value.
-if ! grep "const EAI_OVERFLOW " ${OUT} >/dev/null 2>&1; then
+# IRIX <netdb.h> does not define the EAI_* constants under
+# _XOPEN_SOURCE=500; socket_irix.go provides them instead.
+if test "${GOOS}" != "irix" && ! grep "const EAI_OVERFLOW " ${OUT} >/dev/null 2>&1; then
   echo "const EAI_OVERFLOW = 0" >> ${OUT}
 fi
 

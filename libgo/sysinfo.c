@@ -26,6 +26,15 @@
 #ifdef __sgi__
 #include <sys/bsd_types.h>
 #include <sys/ttold.h>
+/* <sys/endian.h> only defines BYTE_ORDER/BIG_ENDIAN/LITTLE_ENDIAN under
+   _SGIAPI, which _XOPEN_SOURCE disables.  Without them both endian
+   branches of <netinet/tcp.h> are compiled, giving duplicate th_off and
+   th_x2 members.  IRIX on MIPS is big-endian.  */
+#ifndef BYTE_ORDER
+#define LITTLE_ENDIAN 1234
+#define BIG_ENDIAN 4321
+#define BYTE_ORDER BIG_ENDIAN
+#endif
 #endif
 #include <netinet/tcp.h>
 #if defined(HAVE_NETINET_IN_SYSTM_H)

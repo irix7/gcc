@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build aix || darwin || freebsd || hurd || solaris
+//go:build aix || darwin || freebsd || irix || hurd || solaris
 
 package net
 

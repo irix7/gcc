@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-//go:build aix || darwin || dragonfly || netbsd || openbsd || solaris
+//go:build aix || darwin || dragonfly || irix || netbsd || openbsd || solaris
 
 package syscall
 
@@ -123,7 +123,13 @@ func forkAndExecInChild(argv0 *byte, argv, envv []*byte, chroot, dir *byte, attr
 		}
 
 		// Place process group in foreground.
-		_, err1 = raw_ioctl_ptr(sys.Ctty, TIOCSPGRP, unsafe.Pointer(&pgrp))
+		// On 32-bit targets such as mips-sgi-irix6.5, TIOCSPGRP is a
+		// request code whose high bit is set, so it is generated as a
+		// negative untyped constant which gccgo rejects as a uintptr.
+		// Force a run-time conversion through an int32 variable.
+		req32 := int32(TIOCSPGRP)
+		req := uintptr(req32)
+		_, err1 = raw_ioctl_ptr(sys.Ctty, req, unsafe.Pointer(&pgrp))
 		if err1 != 0 {
 			goto childerror
 		}
