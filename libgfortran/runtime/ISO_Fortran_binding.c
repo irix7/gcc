@@ -35,11 +35,26 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
    PRI*PTR macros (IRIX 6.5 is one).  The values printed below are cast to
    ptrdiff_t, so provide a matching length modifier when the system header
    does not.  */
-#ifndef PRIiPTR
+/* IRIX 6.5's <inttypes.h> lacks PRI*PTR macros; define them unconditionally
+   for our use (the format strings cast to ptrdiff_t, so we need a length
+   modifier matching the pointer size).  */
+#undef PRIiPTR
+#undef PRIuPTR
+#undef PRIxPTR
+#undef PRIXPTR
+#undef PRIoPTR
 # if defined(__SIZEOF_PTRDIFF_T__) && __SIZEOF_PTRDIFF_T__ > 4
 #  define PRIiPTR "li"
+#  define PRIuPTR "lu"
+#  define PRIxPTR "lx"
+#  define PRIXPTR "lX"
+#  define PRIoPTR "lo"
 # else
 #  define PRIiPTR "i"
+#  define PRIuPTR "u"
+#  define PRIxPTR "x"
+#  define PRIXPTR "X"
+#  define PRIoPTR "o"
 # endif
 #endif
 
