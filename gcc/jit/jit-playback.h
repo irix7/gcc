@@ -222,13 +222,15 @@ public:
   new_call (location *loc,
 	    function *func,
 	    const auto_vec<rvalue *> *args,
-	    bool require_tail_call);
+	    bool require_tail_call,
+	    bool return_slot_optimization);
 
   rvalue *
   new_call_through_ptr (location *loc,
 			rvalue *fn_ptr,
 			const auto_vec<rvalue *> *args,
-			bool require_tail_call);
+			bool require_tail_call,
+			bool return_slot_optimization);
 
   rvalue *
   new_cast (location *loc,
@@ -365,7 +367,8 @@ private:
   build_call (location *loc,
 	      tree fn_ptr,
 	      const auto_vec<rvalue *> *args,
-	      bool require_tail_call);
+	      bool require_tail_call,
+	      bool return_slot_optimization);
 
   tree
   build_cast (location *loc,
@@ -606,6 +609,9 @@ public:
 	     const char *name,
 	     const std::vector<std::pair<gcc_jit_variable_attribute,
 					 std::string>> &attributes);
+
+  void
+  set_named_return_value (lvalue *local);
 
   block*
   new_block (const char *name);

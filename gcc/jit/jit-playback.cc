@@ -44,6 +44,7 @@ along with GCC; see the file COPYING3.  If not see
 #include "gcc.h"
 #include "diagnostic.h"
 #include "stmt.h"
+#include "function.h"
 #include "realmpfr.h"
 
 #include "jit-playback.h"
@@ -1669,7 +1670,8 @@ playback::context::
 build_call (location *loc,
 	    tree fn_ptr,
 	    const auto_vec<rvalue *> *args,
-	    bool require_tail_call)
+	    bool require_tail_call,
+	    bool return_slot_optimization)
 {
   vec<tree, va_gc> *tree_args;
   vec_alloc (tree_args, args->length ());
@@ -1688,6 +1690,10 @@ build_call (location *loc,
 
   if (require_tail_call)
     CALL_EXPR_MUST_TAIL_CALL (call) = 1;
+
+  /* Do not do the return slot optimization if the value is in a register.  */
+  if (return_slot_optimization && !is_gimple_reg_type (return_type))
+    CALL_EXPR_RETURN_SLOT_OPT (call) = 1;
 
   return new rvalue (this, call);
 
@@ -1710,7 +1716,8 @@ playback::context::
 new_call (location *loc,
 	  function *func,
 	  const auto_vec<rvalue *> *args,
-	  bool require_tail_call)
+	  bool require_tail_call,
+	  bool return_slot_optimization)
 {
   tree fndecl;
 
@@ -1722,7 +1729,8 @@ new_call (location *loc,
 
   tree fn = build1 (ADDR_EXPR, build_pointer_type (fntype), fndecl);
 
-  return build_call (loc, fn, args, require_tail_call);
+  return build_call (loc, fn, args, require_tail_call,
+		     return_slot_optimization);
 }
 
 /* Construct a playback::rvalue instance (wrapping a tree) for a
@@ -1733,12 +1741,14 @@ playback::context::
 new_call_through_ptr (location *loc,
 		      rvalue *fn_ptr,
 		      const auto_vec<rvalue *> *args,
-		      bool require_tail_call)
+		      bool require_tail_call,
+		      bool return_slot_optimization)
 {
   gcc_assert (fn_ptr);
   tree t_fn_ptr = fn_ptr->as_tree ();
 
-  return build_call (loc, t_fn_ptr, args, require_tail_call);
+  return build_call (loc, t_fn_ptr, args, require_tail_call,
+		     return_slot_optimization);
 }
 
 /* Construct a tree for a cast.  */
@@ -2417,6 +2427,21 @@ new_local (location *loc,
   return new lvalue (m_ctxt, inner);
 }
 
+void
+playback::function::
+set_named_return_value (lvalue *local)
+{
+  tree result = DECL_RESULT (m_inner_fndecl);
+  /* Do not apply this to values that do not return in memory.  */
+  if (!aggregate_value_p (result, m_inner_fndecl))
+    return;
+
+  tree var = local->as_tree ();
+  TREE_ADDRESSABLE (result) = 1;
+  SET_DECL_VALUE_EXPR (var, result);
+  DECL_HAS_VALUE_EXPR_P (var) = 1;
+}
+
 /* Construct a new block within this playback::function.  */
 
 playback::block *
@@ -2824,14 +2849,23 @@ add_return (location *loc,
     {
       tree t_lvalue = DECL_RESULT (m_func->as_fndecl ());
       tree t_rvalue = rvalue->as_tree ();
-      if (TREE_TYPE (t_rvalue) != TREE_TYPE (t_lvalue))
+      if (VAR_P (t_rvalue)
+	  && DECL_HAS_VALUE_EXPR_P (t_rvalue)
+	  && DECL_VALUE_EXPR (t_rvalue) == t_lvalue)
+	t_rvalue = t_lvalue;
+      else if (TREE_TYPE (t_rvalue) != TREE_TYPE (t_lvalue))
 	t_rvalue = build1 (CONVERT_EXPR,
 			   TREE_TYPE (t_lvalue),
 			   t_rvalue);
-      modify_retval = build2 (MODIFY_EXPR, return_type,
-			      t_lvalue, t_rvalue);
-      if (loc)
-	set_tree_location (modify_retval, loc);
+      if (t_rvalue == t_lvalue)
+	modify_retval = t_lvalue;
+      else
+	{
+	  modify_retval = build2 (MODIFY_EXPR, return_type,
+				  t_lvalue, t_rvalue);
+	  if (loc)
+	    set_tree_location (modify_retval, loc);
+	}
     }
   tree return_stmt = build1 (RETURN_EXPR, return_type,
 			     modify_retval);

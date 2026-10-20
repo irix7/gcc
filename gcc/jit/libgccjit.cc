@@ -4680,6 +4680,27 @@ gcc_jit_rvalue_set_bool_require_tail_call (gcc_jit_rvalue *rvalue,
 
 /* Public entrypoint.  See description in libgccjit.h.
 
+   After error-checking, the real work is effectively done by the
+   gcc::jit::base_call::set_return_slot_optimization setter in
+   jit-recording.h.  */
+
+void
+gcc_jit_rvalue_set_bool_return_slot_optimization (gcc_jit_rvalue *rvalue,
+						  int return_slot_optimization)
+{
+  RETURN_IF_FAIL (rvalue, NULL, NULL, "NULL call");
+  JIT_LOG_FUNC (rvalue->get_context ()->get_logger ());
+
+  /* Verify that it's a call.  */
+  gcc::jit::recording::base_call *call = rvalue->dyn_cast_base_call ();
+  RETURN_IF_FAIL_PRINTF1 (call, NULL, NULL, "not a call: %s",
+			  rvalue->get_debug_string ());
+
+  call->set_return_slot_optimization (return_slot_optimization);
+}
+
+/* Public entrypoint.  See description in libgccjit.h.
+
    After error-checking, the real work is done by the
    gcc::jit::recording::type::get_aligned method, in
    jit-recording.cc.  */
@@ -4794,6 +4815,32 @@ gcc_jit_function_set_indirect_return (gcc_jit_function *func)
 {
   RETURN_IF_FAIL (func, NULL, NULL, "NULL function");
   func->set_indirect_return ();
+}
+
+/* Public entrypoint.  See description in libgccjit.h.  */
+
+void
+gcc_jit_function_set_named_return_value (gcc_jit_function *func,
+					 gcc_jit_lvalue *local)
+{
+  RETURN_IF_FAIL (func, NULL, NULL, "NULL function");
+  gcc::jit::recording::context *ctxt = func->m_ctxt;
+  JIT_LOG_FUNC (ctxt->get_logger ());
+  RETURN_IF_FAIL (local, ctxt, NULL, "NULL local");
+  RETURN_IF_FAIL_PRINTF2 (
+    local->is_local () && local->get_scope () == func,
+    ctxt, NULL,
+    "%s is not a local of %s",
+    local->get_debug_string (),
+    func->get_debug_string ());
+  RETURN_IF_FAIL_PRINTF3 (
+    compatible_types (func->get_return_type (), local->get_type ()),
+    ctxt, NULL,
+    "type of %s (%s) is not the return type of %s",
+    local->get_debug_string (),
+    local->get_type ()->get_debug_string (),
+    func->get_debug_string ());
+  func->set_named_return_value (local);
 }
 
 /* Public entrypoint.  See description in libgccjit.h.
