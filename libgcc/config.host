@@ -102,7 +102,7 @@ arm*-*-*)
 	;;
 avr-*-*)
 	cpu_type=avr
-	;;    
+	;;
 bfin*-*)
 	cpu_type=bfin
 	;;
@@ -293,6 +293,14 @@ case ${host} in
   tmake_file="$tmake_file t-crtstuff-pic t-libgcc-pic t-eh-dw2-dip t-slibgcc t-slibgcc-fuchsia"
   extra_parts="crtbegin.o crtend.o"
   ;;
+*-*-haiku*)
+  # This is the generic ELF configuration of Haiku.  Later
+  # machine-specific sections may refine and add to this
+  # configuration.
+  tmake_file="$tmake_file t-crtstuff-pic t-libgcc-pic t-haiku t-slibgcc t-slibgcc-gld t-slibgcc-elf-ver"
+  tmake_file="$tmake_file t-slibgcc-libgcc t-slibgcc-nolc-override"
+  extra_parts="crtbegin.o crtbeginS.o crtend.o crtendS.o"
+  ;;
 *-*-linux* | frv-*-*linux* | *-*-kfreebsd*-gnu | *-*-gnu* | *-*-kopensolaris*-gnu | *-*-uclinuxfdpiceabi)
   tmake_file="$tmake_file t-crtstuff-pic t-libgcc-pic t-eh-dw2-dip t-slibgcc t-slibgcc-gld t-slibgcc-elf-ver t-linux"
   extra_parts="crtbegin.o crtbeginS.o crtbeginT.o crtend.o crtendS.o"
@@ -418,6 +426,13 @@ aarch64*-*-fuchsia*)
 	tmake_file="${tmake_file} ${cpu_type}/t-softfp t-softfp"
 	tmake_file="${tmake_file} t-dfprules"
 	;;
+aarch64*-*-haiku*)
+	tmake_file="${tmake_file} ${cpu_type}/t-aarch64"
+	tmake_file="${tmake_file} ${cpu_type}/t-lse t-slibgcc-libgcc"
+	tmake_file="${tmake_file} ${cpu_type}/t-softfp t-softfp"
+	tmake_file="${tmake_file} t-dfprules"
+	md_unwind_header=aarch64/haiku-unwind.h
+	;;
 aarch64*-*-linux*)
 	extra_parts="$extra_parts crtfastmath.o"
 	md_unwind_def_header=aarch64/aarch64-unwind-def.h
@@ -537,6 +552,12 @@ arm*-*-netbsdelf*)
 	    tmake_file="${tmake_file} arm/t-netbsd t-slibgcc-gld-nover"
 	    ;;
 	esac
+	;;
+arm-*-haiku*)
+	tmake_file="${tmake_file} arm/t-arm arm/t-elf arm/t-bpabi"
+	tmake_file="${tmake_file} t-softfp-sfdf t-softfp-excl arm/t-softfp t-softfp"
+	tm_file="${tm_file} arm/bpabi-lib.h"
+	unwind_header=config/arm/unwind-arm.h
 	;;
 arm*-*-linux* | arm*-*-uclinuxfdpiceabi)
 	tmake_file="${tmake_file} arm/t-arm t-fixedpoint-gnu-prefix t-crtfm"
@@ -1018,6 +1039,8 @@ m32r-*-elf*)
 m32rle-*-elf*)
 	tmake_file=t-fdpbit
 	;;
+m68k-*-haiku*)
+	;;
 m68k-*-elf* | fido-*-elf)
 	tmake_file="$tmake_file m68k/t-floatlib"
 	;;
@@ -1091,6 +1114,8 @@ mips*-sde-elf*)
 	    ;;
 	esac
 	extra_parts="$extra_parts crti.o crtn.o"
+	;;
+mips*-*-haiku*)
 	;;
 mipsisa32-*-elf* | mipsisa32el-*-elf* | \
 mipsisa32r2-*-elf* | mipsisa32r2el-*-elf* | \
@@ -1240,6 +1265,9 @@ powerpc*-*-freebsd*)
 	  md_unwind_header=rs6000/freebsd-unwind.h
 	  ;;
 	esac
+	;;
+powerpc*-*-haiku*)
+	tmake_file="$tmake_file rs6000/t-ppccomm rs6000/t-savresfgpr rs6000/t-crtstuff rs6000/t-crtstuff-pic t-fdpbit"
 	;;
 powerpc-*-netbsd*)
 	tmake_file="$tmake_file rs6000/t-netbsd rs6000/t-crtstuff"
@@ -1511,6 +1539,8 @@ sparc64-*-linux*)		# 64-bit SPARC's running GNU/Linux
 		tmake_file="${tmake_file} sparc/t-softmul"
 	fi
 	md_unwind_header=sparc/linux-unwind.h
+	;;
+sparc64-*-haiku*)
 	;;
 sparc64-*-netbsd*)
 	;;

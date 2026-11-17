@@ -107,6 +107,8 @@ build_objdir := $(toplevel_builddir)/$(build_subdir)
 build_libobjdir := $(toplevel_builddir)/$(build_libsubdir)
 target_objdir := $(toplevel_builddir)/$(target_subdir)
 
+HYBRID_SECONDARY = @HYBRID_SECONDARY@
+
 # --------
 # Defined vpaths
 # --------
@@ -2691,6 +2693,10 @@ DRIVER_DEFINES = \
   -DCONFIGURE_SPECS="\"@CONFIGURE_SPECS@\"" \
   -DTOOL_INCLUDE_DIR=\"$(gcc_tooldir)/include\" \
   -DNATIVE_SYSTEM_HEADER_DIR=\"$(NATIVE_SYSTEM_HEADER_DIR)\"
+  
+ifneq ($(HYBRID_SECONDARY),)
+DRIVER_DEFINES += -DHYBRID_SECONDARY="\"$(HYBRID_SECONDARY)\""
+endif
 
 CFLAGS-gcc.o += $(DRIVER_DEFINES) -DBASEVER=$(BASEVER_s)
 gcc.o: $(BASEVER)
@@ -3516,6 +3522,10 @@ PREPROCESSOR_DEFINES = \
   -DPREFIX=\"$(prefix)/\" \
   -DSTANDARD_EXEC_PREFIX=\"$(libdir)/gcc/\" \
   @TARGET_SYSTEM_ROOT_DEFINE@
+
+ifneq ($(HYBRID_SECONDARY),)
+PREPROCESSOR_DEFINES += -DHYBRID_SECONDARY="\"$(HYBRID_SECONDARY)\""
+endif
 
 CFLAGS-cppbuiltin.o += $(PREPROCESSOR_DEFINES) -DBASEVER=$(BASEVER_s)
 cppbuiltin.o: $(BASEVER)

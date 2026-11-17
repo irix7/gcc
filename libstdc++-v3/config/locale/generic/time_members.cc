@@ -133,7 +133,12 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
       char* __sav = new char[__llen];
       memcpy(__sav, __old, __llen);
       setlocale(LC_ALL, _M_name_timepunct);
+#ifdef __sgi
+      // IRIX declares the format of wcsftime as a narrow string.
       const size_t __len = wcsftime(__s, __maxlen, (const char *)__format, __tm);
+#else
+      const size_t __len = wcsftime(__s, __maxlen, __format, __tm);
+#endif
       setlocale(LC_ALL, __sav);
       delete [] __sav;
       // Make sure __s is null terminated.
