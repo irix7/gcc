@@ -820,6 +820,7 @@ LDEXP_LIB
 EXTRA_GCC_LIBS
 GNAT_LIBEXC
 COLLECT2_LIBS
+build_math_library
 CXXDEPMODE
 DEPDIR
 am__leading_dot
@@ -868,6 +869,7 @@ with_float
 with_cpu
 enable_multiarch
 enable_multilib
+HYBRID_SECONDARY
 coverage_flags
 valgrind_command
 valgrind_path_defines
@@ -7821,6 +7823,17 @@ fi
 # Miscenalleous configure options
 # -------------------------------
 
+# handle --with-hybrid-secondary
+
+# Check whether --with-hybrid_secondary was given.
+if test "${with_hybrid_secondary+set}" = set; then :
+  withval=$with_hybrid_secondary; HYBRID_SECONDARY=$withval
+else
+  HYBRID_SECONDARY=
+
+fi
+
+
 # Determine whether or not multilibs are enabled.
 # Check whether --enable-multilib was given.
 if test "${enable_multilib+set}" = set; then :
@@ -10132,6 +10145,15 @@ fi
 # UNSORTED
 # --------
 
+
+# Configure -lm usage for host tools that need it
+build_math_library="-lm"
+case $build in
+  *-*-haiku*)
+    # no separate math library needed
+    build_math_library=
+    ;;
+esac
 
 # These libraries may be used by collect2.
 # We may need a special search path to get them linked.
@@ -21176,8 +21198,9 @@ haiku*)
   soname_spec='${libname}${release}${shared_ext}$major'
   shlibpath_var=LIBRARY_PATH
   shlibpath_overrides_runpath=yes
-  sys_lib_dlsearch_path_spec='/boot/home/config/lib /boot/common/lib /boot/system/lib'
-  hardcode_into_libs=yes
+  sys_lib_search_path_spec='/boot/system/non-packaged/develop/lib /boot/system/develop/lib'
+  sys_lib_dlsearch_path_spec='/boot/home/config/non-packaged/lib /boot/home/config/lib /boot/system/non-packaged/lib /boot/system/lib'
+  hardcode_into_libs=no
   ;;
 
 hpux9* | hpux10* | hpux11*)
@@ -24902,8 +24925,9 @@ haiku*)
   soname_spec='${libname}${release}${shared_ext}$major'
   shlibpath_var=LIBRARY_PATH
   shlibpath_overrides_runpath=yes
-  sys_lib_dlsearch_path_spec='/boot/home/config/lib /boot/common/lib /boot/system/lib'
-  hardcode_into_libs=yes
+  sys_lib_search_path_spec='/boot/system/non-packaged/develop/lib /boot/system/develop/lib'
+  sys_lib_dlsearch_path_spec='/boot/home/config/non-packaged/lib /boot/home/config/lib /boot/system/non-packaged/lib /boot/system/lib'
+  hardcode_into_libs=no
   ;;
 
 hpux9* | hpux10* | hpux11*)

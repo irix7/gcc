@@ -1817,7 +1817,7 @@ else
   lt_cv_dlopen_libs=
 
   case $host_os in
-  beos*)
+  beos* | haiku*)
     lt_cv_dlopen="load_add_on"
     lt_cv_dlopen_libs=
     lt_cv_dlopen_self=yes
@@ -2427,8 +2427,9 @@ haiku*)
   soname_spec='${libname}${release}${shared_ext}$major'
   shlibpath_var=LIBRARY_PATH
   shlibpath_overrides_runpath=yes
-  sys_lib_dlsearch_path_spec='/boot/home/config/lib /boot/common/lib /boot/system/lib'
-  hardcode_into_libs=yes
+  sys_lib_search_path_spec='/boot/system/non-packaged/develop/lib /boot/system/develop/lib'
+  sys_lib_dlsearch_path_spec='/boot/home/config/non-packaged/lib /boot/home/config/lib /boot/system/non-packaged/lib /boot/system/lib'
+  hardcode_into_libs=no
   ;;
 
 hpux9* | hpux10* | hpux11*)
@@ -3748,8 +3749,6 @@ m4_if([$1], [CXX], [
       ;;
     haiku*)
       # PIC is the default for Haiku.
-      # The "-static" flag exists, but is broken.
-      _LT_TAGVAR(lt_prog_compiler_static, $1)=
       ;;
     interix[[3-9]]*)
       # Interix 3.x gcc -fpic/-fPIC options generate broken code.
@@ -4059,8 +4058,6 @@ m4_if([$1], [CXX], [
 
     haiku*)
       # PIC is the default for Haiku.
-      # The "-static" flag exists, but is broken.
-      _LT_TAGVAR(lt_prog_compiler_static, $1)=
       ;;
 
     hpux*)

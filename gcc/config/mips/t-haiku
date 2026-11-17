@@ -1,0 +1,4 @@
+# Haiku on MIPS: the default multilib is hard-float n32 for userland.  The
+# kernel, its add-ons and the boot loader are built with -msoft-float.
+MULTILIB_OPTIONS = msoft-float
+MULTILIB_DIRNAMES = soft-float
