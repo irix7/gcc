@@ -40,7 +40,8 @@ Boston, MA 02111-1307, USA.  */
    ABI.  */
 
 #undef	LINK_SPEC
-#define LINK_SPEC "-m elf_mips_haiku %{!r:-shared} %{nostart:-e 0}"
+#define LINK_SPEC "-m elf_mips_haiku %{!r:-shared} %{nostart:-e 0} " \
+  "%{shared:-e 0} %{!shared: %{!nostart: -no-undefined}}"
 
 /* long double is the same as double, as on Haiku's 32 bit ports.  The
    n32 default is 128 bits.  */
