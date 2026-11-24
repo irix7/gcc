@@ -43,6 +43,12 @@ Boston, MA 02111-1307, USA.  */
 #define LINK_SPEC "-m elf_mips_haiku %{!r:-shared} %{nostart:-e 0} " \
   "%{shared:-e 0} %{!shared: %{!nostart: -no-undefined}}"
 
+/* Give data symbols a type and a size, as elfos.h does.  mips.h declares
+   them without either, and Haiku's runtime_loader looks symbols up by
+   type.  */
+#undef	ASM_DECLARE_OBJECT_NAME
+#define ASM_DECLARE_OBJECT_NAME mips_declare_object_name
+
 /* long double is the same as double, as on Haiku's 32 bit ports.  The
    n32 default is 128 bits.  */
 #undef	MIPS_LONG_DOUBLE_TYPE_SIZE
